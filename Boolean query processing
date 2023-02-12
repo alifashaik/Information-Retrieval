@@ -1,0 +1,87 @@
+doc=[]
+for i in range(1,len(s)+1):
+  doc.append(i)
+#print(doc)
+def notop(l):
+  f=[]
+  for i in doc:
+    if i not in l:
+      f.append(i)
+  return f
+def inter(l1,l2):
+  f=[]
+  for i in l1:
+    if i in l2:
+      f.append(i)
+  return f
+def union(l1,l2):
+    [l1.append(x) for x in l2 if x not in l1] 
+    return l1
+def post(w):
+     f=[]
+     for i in range(len(s)):
+       if w in s[i]:
+         f.append(i+1)
+     return f
+def precedence(q1):
+  if q1=="and":
+    return 2
+  elif q1=="or":
+    return 3
+  elif q1=="not":
+    return 1
+
+
+st=input("enter query:")
+token=[]
+boo=['and','or','not']
+st=st.lower().split()
+query=[]
+op=[]
+ind=-1
+for i in range(len(st)):
+  if st[i] not in boo:
+    query.append(post(st[i]))
+  else:
+    pre=precedence(st[i])
+    now=st[i]
+    if op==[]:
+      op.append(st[i])
+      ind+=1
+    elif precedence(op[ind])>pre:
+      op.append(st[i])
+      ind+=1
+    elif precedence(op[ind])<=pre:
+      while(op!=[] and precedence(op[ind])<pre):
+        if op[ind]=="and":
+          q1=query.pop()
+          q2=query.pop()
+          query.append(inter(q1,q2))
+        elif op[ind]=="or":
+          q1=query.pop()
+          q2=query.pop()
+          query.append(union(q1,q2))
+        elif op[ind]=="not":
+          q1=query.pop()
+          query.append(notop(q1))
+        op.pop()
+        ind-=1
+      query.append(now)
+      ind+=1
+
+if(op!=[]):
+  while(op!=[]):
+    if op[ind]=="and":
+      q1=query.pop()
+      q2=query.pop()
+      query.append(inter(q1,q2))
+    elif op[ind]=="or":
+      q1=query.pop()
+      q2=query.pop()
+      query.append(union(q1,q2))
+    elif op[ind]=="not":
+      q1=query.pop()
+      query.append(notop(q1))
+    ind-=1
+    op.pop()
+print(query[0])
