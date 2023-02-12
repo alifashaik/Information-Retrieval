@@ -1,0 +1,49 @@
+from sklearn import datasets
+import pandas as pd
+iris = datasets.load_iris()
+#print(len(iris.data))
+import math
+import numpy as np
+q =list(map(int,input().split()))
+k =15
+x = iris.data[:, :2]  # we only take the first two features.
+y = iris.target
+#print(y)
+def distance(x, q):
+  a = []
+  for i in range(len(x)):
+    h = math.sqrt((x[i][0] - q[0])**2 + (x[i][1] - q[1])**2)
+    a.append(h)
+  return a
+c = distance(x,q)
+#print(c)
+ind = np.argsort(c)
+#print(ind)
+t = y[ind][:k]
+#print(t)
+t = list(t)
+#print(t)
+one = t.count(1)
+two = t.count(2)
+zero = t.count(0)
+if(one > two and one > zero):
+    m ="Iris-versicolor"
+elif(two > one and two > zero ):
+  m ="Iris_verginica"
+else:
+  m ="Iris_setosa"
+print("point belongs to: ",m)
+import pandas as pd
+cols = ["sepal_length", "sepal_width",  "petal_length", "petal_width"]
+target = iris.target
+iris_df = pd.DataFrame(iris.data, columns = cols )
+
+iris_df.head()
+
+import matplotlib.pyplot as plt
+plt.plot(iris_df["sepal_length"][:50],iris_df["sepal_width"][:50], "g*")
+plt.plot(iris_df["sepal_length"][50:100],iris_df["sepal_width"][50:100], "r.")
+plt.plot(iris_df["sepal_length"][100:],iris_df["sepal_width"][100:], "b.")
+plt.xlabel("Sepal Length (cm)")
+plt.ylabel("Sepal Width (cm)")
+plt.show()
