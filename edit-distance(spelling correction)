@@ -1,0 +1,15 @@
+import numpy as np
+s1=input("enter string 1")
+s2=input("enter string 2")
+a=np.zeros([len(s2)+1,len(s1)+1],dtype=int)
+a[0]=[int(x) for x in range(len(s1)+1)]
+a[:,0]=[int(x) for x in range(len(s2)+1)]
+#print(a)
+for i in range(1,len(s2)+1):
+  for j in range(1,len(s1)+1):
+    if(s2[i-1]==s1[j-1]):
+      a[i][j]=min(a[i][j-1]+1,a[i-1][j]+1)
+    else:
+      a[i][j]=min(a[i][j-1]+1,a[i-1][j]+1,a[i-1][j-1]+1)
+print("edit distance: ",a[len(s2)][len(s1)])
+#print(a)
