@@ -1,0 +1,28 @@
+def mean(s):
+    return sum(s)/len(s)
+l=[1,2,3,4,5,6,7,10,11,13,18,20]
+n=int(input())
+clusters={}
+for i in range(n):
+  clusters[i+1]=[[],l[i]]
+while True:
+  present={}
+  for cluster in clusters:
+    present[cluster]=[]
+  for doc in l:
+    m=1000
+    c=""
+    for cluster in clusters:
+      if(m>abs(doc-clusters[cluster][-1])):
+        m=abs(doc-clusters[cluster][-1])
+        c=cluster
+    present[c].append(doc)
+  if present[c]==clusters[c][0]:
+    break
+  else:
+        for cluster in clusters:
+            clusters[cluster][0] = present[cluster]
+            clusters[cluster][1] = mean(present[cluster])
+
+for cluster in clusters:
+    print(cluster ," : ",clusters[cluster][0])
