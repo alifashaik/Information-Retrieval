@@ -1,0 +1,152 @@
+q=input()
+if(q[len(q)-1]=='*'):
+  q='$'+q.replace('*','')
+elif(q[0]=='*'):
+  q=q.replace('*','')+'$'
+else:
+  q=q.replace('*',' ')
+  #print(q)
+bigram(q)
+l=["test.txt",'test2.txt']
+s=[]
+for i in range(2):
+  f=open(l[i],encoding="UTF-8")
+  read=f.read()
+  s.append(read)
+  f.seek(0)
+#removing punctuations and new lines
+punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word,"")
+      s[i]=s[i].replace('\n',"")
+      s[i]=s[i].lower()
+dummy2s=[]
+for k in range(len(s)):
+  dummy2s.append(s[k].split())
+res=[]
+for k in range(len(dummy2s)):
+  res.extend(set(dummy2s[k]))
+res=set(res)
+res=list(res)
+res.sort()
+#print(res)
+#NON-POSITIONAL INDICES
+dictx1={}
+for word in res:
+  dictx1[word]=[]
+for word in res:
+  for i in range(len(dummy2s)):
+    for j in range(len(dummy2s[i])):
+      if word==dummy2s[i][j]:
+        dictx1[word].append(i+1)
+        break
+bigram=[]
+dummys=[]
+for i in range(len(s)):
+  dummys.append(s[i].split())
+uses=[]
+for i in range(len(dummys)):
+  for j in range(len(dummys[i])):
+    uses.append('$'+dummys[i][j]+'$')
+#print(uses)
+#print(dummys) 
+for i in range(len(s)):
+  for word in s[i]:
+    s[i]=s[i].replace(' ','$')
+dummy=[]
+for i in range(len(s)):
+  dummy.append('$'+s[i])
+for i in range(len(dummy)):
+  for j in range(len(dummy[i])-1):
+    bigram.append(dummy[i][j:j+2])
+  bigram.append(dummy[i][j+1]+'$')
+#print(bigram)
+bigramposting={}
+for i in range(len(bigram)):
+  word=bigram[i]
+  bigramposting[word]=[]
+  postinglist=[]
+  for i in range(len(uses)):
+    if word in uses[i]:
+      postinglist.append(uses[i])
+  bigramposting[word]=postinglist
+#print(bigramposting)
+query=input()
+req=[]
+flag=0
+if(query[0]=='*'):
+  for i in range(1,len(query)-1):
+    req.append(query[i:i+2])
+  req.append(query[i+1]+'$')
+  query=query+'$'
+elif(query[len(query)-1]=='*'):
+  req.append('$'+query[0])
+  query='$'+query
+  for i in range(1,len(query)-2):
+    req.append(query[i:i+2])
+else:
+  res=""
+  flag=1
+  idx=query.index("*")
+  first=query[0:idx]
+  second=query[idx+1:]
+  res=second+'$'+first+'*'
+  first='$'+first
+  second=second+'$'
+  query=res
+  for i in range(len(query)-2):
+    req.append(query[i:i+2])
+required=[]
+for i in range(len(req)):
+  word=req[i]
+  if word in bigramposting.keys():
+    required.append(bigramposting[word])
+if(len(required)!=len(req)):
+  print("none")
+else:
+  #print(required)
+  filtered=list(set.intersection(*map(set,required)))
+  req1=[]
+  req2=[]
+  if(flag==1):
+    for i in range(0,len(first)-1):
+      req1.append(first[i:i+2])
+    for i in range(0,len(second)-1):
+      req2.append(second[i:i+2])
+    for i in filtered:
+      ind=i.index(req1[0])
+      ind2=i.index(req2[0])
+      flag2=0
+      for j in range(1,len(req1)):
+        new_ind=i.index(req1[j])
+        if(new_ind!=ind+1):
+          flag2=1
+          break
+        ind=new_ind
+      for j in range(1,len(req2)):
+        new_ind2=i.index(req2[j])
+        if(new_ind2!=ind2+1):
+          flag2=1
+          break
+        ind2=new_ind2
+      if(flag2==0):
+        q=i[1:len(i)-1]
+        print(q,end=" ")
+        print(dictx1[q])
+    
+  else:
+    for i in filtered:
+      ind=i.index(req[0])
+      flag2=0
+      for j in range(1,len(req)):
+        new_ind=i.index(req[j])
+        if(new_ind!=ind+1):
+          flag2=1
+          break
+        ind=new_ind
+      if(flag2==0):
+        q=i[1:len(i)-1]
+        print(q,end=" ")
+        print(dictx1[q])
