@@ -1,0 +1,59 @@
+docs=["t1.txt","t2.txt"]
+s=[]
+for i in range(2):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  s.append(r)
+  f.seek(0)
+print(s[0])
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word," ")
+    s[i]=s[i].replace("\n"," ")
+    s[i]=s[i].lower()
+print(s[0])
+token=[]
+for i in s:
+  tk=word_tokenize(i)
+  #print(tk)
+  token.append(tk)
+  #print(token)
+res=[]
+for i in token:
+  for word in i:
+    if not word in stopwords.words('english') and not word in res:
+      res.append(word)
+      #print(res)
+res.sort()
+#print(res)
+for k in range(len(s)):
+  s[k]=s[k].split()
+print(s)
+npdic={}
+for word in res:
+  st=[]
+  for i in range(len(s)):
+    if word in s[i]:
+      st.append(i+1)
+  npdic[word]=st
+print(npdic)
+pdic={}
+for word in res:
+  dic={}
+  for j in npdic[word]:
+    st=[]
+    for k in s[j-1]:
+      if word==k:
+        st.append(s[j-1].index(k))
+        #print(word,st)
+    dic[j]=st
+    #print(word,dic)
+  pdic[word]=dic
+print(pdic)
