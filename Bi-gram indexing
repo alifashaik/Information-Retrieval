@@ -1,0 +1,46 @@
+docs=["t1.txt","t2.txt"]
+s=[]
+for i in range(2):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  s.append(r)
+  f.seek(0)
+#print(s[0])
+punc = '''!()-[],{};:'"\, <>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word," ")
+    s[i]=s[i].replace("\n"," ")
+    s[i]=s[i].lower()
+s[0]=" "+s[0]
+s[1]=" "+s[1]
+#print(s)
+bg=[]
+bgi=""
+for i in range(len(s)):
+  for j in range(len(s[i])):
+    if(len(bgi)!=2):
+      if s[i][j]==" ":
+        bgi+='$'
+      else:
+        bgi+=s[i][j]
+    if(len(bgi)==2):
+      bg.append(bgi)
+      bgi=bgi[1::]
+print(bg)
+def bigram(s):
+  bg=[]
+  bgi=""
+  for i in range(len(s)):
+    for j in range(len(s[i])):
+      if(len(bgi)!=2):
+        if s[i][j]==" ":
+          bgi+='$'
+        else:
+          bgi+=s[i][j]
+      if(len(bgi)==2):
+        bg.append(bgi)
+        bgi=bgi[1::]
+  print(bg)
+bigram(" hap")
