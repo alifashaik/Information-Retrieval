@@ -1,0 +1,97 @@
+docs=['t1.txt','t2.txt']
+s=[]
+for i in range(len(docs)):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  s.append(r)
+  f.seek(0)
+#print(s[0])
+
+#tokenisation and normalisation
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+
+#remove punctuations
+punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word," ")
+    s[i]=s[i].replace("\n"," ")
+    s[i]=s[i].lower()
+#print(s[0])
+#tokenisation & stop words removal
+token=[]
+for i in s:
+    tk=word_tokenize(i)
+    token.append(tk)
+res=[]
+for i in token:
+  for word in i:
+    if not word in stopwords.words('english') and not word in res:
+      res.append(word)
+for k in range(len(s)):
+  s[k]=s[k].split()
+print(s)
+voc=[*set(res)]
+print(voc)
+#calculation of tf and idf
+import math
+res={}
+l1=[]
+l2=[]
+for i in voc:
+  tf=0
+  df=0
+  for j in s[0]:
+      if i==j:
+        tf+=1
+  for k in s:
+    if i in k:
+      df+=1
+  idf=math.log(2/df)
+  l1.append(tf*idf)
+for i in voc:
+  tf=0
+  df=0
+  for j in s[1]:
+      if i==j:
+        tf+=1
+  for k in s:
+    if i in k:
+      df+=1
+  idf=math.log(2/df)
+  l2.append(tf*idf)
+res[1]=l1
+res[2]=l2
+print(res)
+#query vector
+query=list(input("enter query").lower().split())
+print(query)
+qvec=[]
+for i in voc:
+  if i in query:
+      qvec.append(1)
+  else:
+    qvec.append(0)
+print(qvec)
+print(voc)
+import numpy as np
+#cosine similarities
+def sqsum(v):
+  vs=0
+  for i in v:
+    vs+=i**2
+  return math.sqrt(vs)
+cos1=(np.dot(res[1],qvec))/(sqsum(res[1])*sqsum(qvec))
+cos2=np.dot(res[2],qvec)/(sqsum(res[2])*sqsum(qvec))
+if cos1>cos2:
+  print('1st doc is more relevant')
+elif cos2>cos1:
+  print('2nd doc is more relevant')
+else:
+  print('both docs are relevant')
+print(cos1,cos2)
