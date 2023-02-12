@@ -1,0 +1,67 @@
+docs=["doc1.txt","doc2.txt","doc3.txt","doc4.txt"]
+v=[]
+for i in range(len(docs)):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  v.append(r)
+  f.seek(0)
+#print(v[0])
+
+#tokenisation and normalisation
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+
+#tokenisation & stop words removal
+token=[]
+for i in v:
+    tk=word_tokenize(i)
+    token.append(tk)
+res=[]
+for i in token:
+  for word in i:
+    if not word in stopwords.words('english') and not word in res:
+      res.append(word)
+res.sort()
+for k in range(len(v)):
+  v[k]=v[k].split()
+#print(v[0])
+
+#doc classification and vocubulary
+yes=[]
+yes.extend(v[0])
+yes.extend(v[1])
+yes.extend(v[2])
+#print(yes)
+no=v[3]
+#vocabulary
+voc=yes+no
+voc=[*set(voc)]#removing duplicates
+print(voc)
+
+#probability
+def probability(word):
+  ny=yes.count(word)
+  nn=no.count(word)
+  py=(ny+1)/(len(yes)+len(voc))
+  pn=(nn+1)/(len(no)+len(voc))
+  p=[py,pn]
+  #print(p)
+  return p
+
+  '''class prob
+word=[prob(yes),prob(no)]'''
+tc=list(input('enter the text to be classified: ').split())
+prob=[]
+pclsy=3/4
+pclsn=1/4
+for i in tc:
+  pclsy=pclsy*probability(i)[0]
+  pclsn*=probability(i)[1]
+print(pclsy,pclsn)
+if(pclsy>pclsn):
+  print('Given text is classified into class yes')
+else:
+  print('Given text is classified into class no')
