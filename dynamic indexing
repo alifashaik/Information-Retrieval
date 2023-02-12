@@ -1,0 +1,79 @@
+docs=["t1.txt","t2.txt","t3.txt","t4.txt","t5.txt","t6.txt"]
+s=[]
+for i in range(len(docs)):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  s.append(r)
+  f.seek(0)
+print(s[0])
+
+#tokenisation and normalisation
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+
+#remove punctuations
+punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word," ")
+    s[i]=s[i].replace("\n"," ")
+    s[i]=s[i].lower()
+print(s[0])
+#tokenisation & stop words removal
+token=[]
+for i in s:
+    tk=word_tokenize(i)
+    token.append(tk)
+res=[]
+for i in token:
+  for word in i:
+    if not word in stopwords.words('english') and not word in res:
+      res.append(word)
+res.sort()
+for k in range(len(s)):
+  s[k]=s[k].split()
+print(s[0])
+def nonpos(p,s,ind):
+  np=[]
+  for i in range(len(s)):
+    if p in s[i]:
+       np.append(ind+i+1)
+  return np
+def block(s,l,u,ind):
+     b={}
+     for i in s[l:u]:
+       print(i)
+       for j in i:
+         if j not in b.keys():
+           b[j]=nonpos(j,s[l:u],ind)
+     return b
+def dicmerge(r,b):
+  for i in b.keys():
+    if i not in r.keys():
+      r[i]=b[i]
+    else:
+      r[i]=r[i].extend(b[i])
+  return r
+def dicsort(r):
+  keys=list(r.keys())
+  keys.sort()
+  r={i:r[i] for i in keys}
+  return r
+auxidic={}
+maindic={}
+for i in range(0,len(s),3):
+  b=block(s,i,i+3,i)
+  #b=block(s,0,3,0)
+  if(len(auxidic)>50):
+    maindic=dicsort(dicmerge(maindic,auxidic))
+    auxidic={}
+  auxidic=dicmerge(auxidic,b)
+  query=input()
+  if query in auxidic:
+    print("auxi",auxidic[query])
+  if query in maindic:
+    print("main",maindic[query])
