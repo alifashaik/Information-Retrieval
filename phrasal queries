@@ -1,0 +1,85 @@
+docs=["t1.txt","t2.txt"]
+s=[]
+for i in range(2):
+  f=open(docs[i],encoding="UTF-8")
+  r=f.read()
+  s.append(r)
+  f.seek(0)
+print(s[0])
+from nltk.tokenize import word_tokenize
+import nltk
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+nltk.download('punkt')
+#removing punctuations
+
+punc = '''!()-[]{};:'"\, <>./?@#$%^&*_~'''
+for i in range(len(s)):
+  for word in s[i]:
+    if word in punc:
+      s[i]=s[i].replace(word," ")
+    s[i]=s[i].replace("\n"," ")
+    s[i]=s[i].lower()
+print(s[0])
+token=[]
+for i in s:
+  tk=word_tokenize(i)
+  #print(tk)
+  token.append(tk)
+  #print(token)
+res=[]
+for i in token:
+  for word in i:
+    if not word in stopwords.words('english') and not word in res:
+      res.append(word)
+      #print(res)
+res.sort()
+#print(res)
+for k in range(len(s)):
+  s[k]=s[k].split()
+print(s)
+
+def nonpos(p):
+  np=[]
+  for i in range(len(s)):
+    if p in s[i]:
+       np.append(i+1)
+  return np
+#print(nonpos('harry'))
+def pos(p):
+   dic={}
+   np=nonpos(p)
+   #print(np)
+   for j in np:
+    st=[]
+    for k in range(len(s[j-1])):
+      if p==s[j-1][k]:
+        st.append(k)
+        #print(word,st)
+    dic[j]=st
+   return dic
+phrase=input("enter a phrase:")
+phrase=phrase.lower().split()
+r=nonpos(phrase[0])
+#print(phrase)
+for i in (phrase):
+  r=inter(r,nonpos(i))
+if r!=[]:
+  print("docid:",r)
+  fd={}
+  for i in phrase:
+    fd[i]=[pos(i)[j]for j in r]
+  #print(fd)
+  l=[]
+  for j in fd.values():
+      l.append(j)
+  #print(l)
+  for i in range(len(l)-1):
+     for j in range(len(l[i])):
+       #print(l[i+1][j])
+       #if [k+1 for k in l[i][j]] in  l[i+1][j]:
+       for k in range(len(l[i][j])):
+         if l[i][j][k]+1 in l[i+1][j]:
+           print(l[i][j][k])
+else:
+  print(r)
